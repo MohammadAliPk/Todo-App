@@ -23,7 +23,7 @@ async function handler(req, res) {
 
     if (!email || !password) {
         res.status(422).json({
-            status: "Failed", message: "Invalid Data"
+            status: "Failed", message: "Please enter valid data"
         });
         return;
     }
