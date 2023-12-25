@@ -1,12 +1,22 @@
 import axios from "axios";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react"
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react"
 import { toast } from "react-toastify";
 
 
 function SignUpPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+
+    const router = useRouter();
+
+    const { status } = useSession();
+
+    useEffect(() => {
+        if (status === "authenticated") router.replace("/dashboard")
+    }, [status])
 
 
 

@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { signIn } from "next-auth/react"
+import { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react"
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
@@ -10,6 +10,13 @@ function LoginPage() {
     const [password, setPassword] = useState("");
 
     const router = useRouter();
+
+    const { status } = useSession();
+
+    useEffect(() => {
+        if (status === "authenticated") router.replace("/dashboard")
+    }, [status])
+
 
     const loginHandler = async () => {
         const res = await signIn("credentials", {
