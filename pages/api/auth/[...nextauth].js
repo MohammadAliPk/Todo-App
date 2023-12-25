@@ -1,14 +1,19 @@
 import User from "@/models/User";
 import { verifyPassword } from "@/utils/auth";
+import connectDB from "@/utils/connectDB";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 
 const NextAuthConfig = {
-    provider: [
+    providers: [
         CredentialsProvider({
             name: "Credentials",
             async authorize(credentials, req) {
                 const { email, password } = credentials;
+                if (!email || !password) {
+                    throw new Error("Please enter valid data");
+                }
+
                 try {
                     await connectDB();
                 } catch (err) {
