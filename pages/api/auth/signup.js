@@ -22,7 +22,7 @@ async function handler(req, res) {
     const { email, password } = req.body;
 
     if (!email || !password) {
-        res.status(422).json({}).json({
+        res.status(422).json({
             status: "Failed", message: "Invalid Data"
         });
         return;
