@@ -37,7 +37,7 @@ function LoginPage() {
             <h3>Login Form</h3>
             <input type="text" placeholder="Email ..." onChange={(e) => setEmail(e.target.value)} />
             <input type="text" placeholder="Password ..." onChange={(e) => setPassword(e.target.value)} />
-            <button onClick={loginHandler}>Register</button>
+            <button onClick={loginHandler}>Login</button>
             <div>
                 <p>Create an account?</p>
                 <Link href="/signup">Sign up</Link>

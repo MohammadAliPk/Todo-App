@@ -1,12 +1,21 @@
 import React from 'react'
 import Link from 'next/link'
+import { signOut, useSession } from 'next-auth/react'
 
 // Icons
 import { VscListSelection } from "react-icons/vsc"
 import { RxDashboard } from "react-icons/rx"
 import { BiMessageSquareAdd } from "react-icons/bi"
+import { FiLogOut, FiLogIn } from 'react-icons/fi'
 
 function Layout({ children }) {
+
+    const { status } = useSession();
+
+    const logOutHandler = () => {
+        signOut();
+    }
+
     return (
         <div className='container'>
             <header>
@@ -15,20 +24,36 @@ function Layout({ children }) {
             <div className='container--main'>
                 <aside>
                     <p>Welcome</p>
-                    <ul>
+                    {status === "authenticated" ?
+                        <ul>
+                            <li>
+                                <VscListSelection />
+                                <Link href="/">Todos</Link>
+                            </li>
+                            <li>
+                                <BiMessageSquareAdd />
+                                <Link href="/add-todo">Add Todo</Link>
+                            </li>
+                            <li>
+                                <RxDashboard />
+                                <Link href="/profile">Profile</Link>
+                            </li>
+                            <li>
+                                <button onClick={logOutHandler}><FiLogOut /></button>
+                            </li>
+                        </ul> : null
+                    }
+                    {status === "unauthenticated" ? <ul>
                         <li>
-                            <VscListSelection />
-                            <Link href="/">Todos</Link>
+                            <FiLogIn />
+                            <Link href="/login">Login</Link>
                         </li>
                         <li>
                             <BiMessageSquareAdd />
-                            <Link href="/add-todo">Add Todo</Link>
+                            <Link href="/signup">Sign Up</Link>
                         </li>
-                        <li>
-                            <RxDashboard />
-                            <Link href="/profile">Profile</Link>
-                        </li>
-                    </ul>
+                    </ul> : null}
+
                 </aside>
                 <section>
                     {children}
