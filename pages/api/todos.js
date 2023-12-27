@@ -47,6 +47,15 @@ async function handler(req, res) {
 
         res.status(200).json({ status: "Success", data: { todos: sortedData } });
 
+    } else if (req.method == "PATCH") {
+        const { id, status } = req.body;
+        console.log(id, status);
+
+        if (!id || !status) return res.status(422).json({ status: "Failed", message: "Please enter valid data" });
+
+        const result = await User.updateOne({ "todos._id": id }, { $set: { "todos.$.status": status } });
+
+        res.status(200).json({ status: "Success", message: "Todo List successfully updated" });
     }
 }
-export default handler;
+export default handler; 
