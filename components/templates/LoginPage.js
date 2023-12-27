@@ -14,7 +14,7 @@ function LoginPage() {
     const { status } = useSession();
 
     useEffect(() => {
-        if (status === "authenticated") router.replace("/dashboard")
+        if (status === "authenticated") router.replace("/profile")
     }, [status])
 
 
@@ -25,7 +25,7 @@ function LoginPage() {
             redirect: false
         })
         if (!res.error) {
-            router.replace("/dashboard")
+            router.replace("/profile")
         } else {
             toast.error(res.error);
         }

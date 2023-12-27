@@ -15,7 +15,7 @@ function SignUpPage() {
     const { status } = useSession();
 
     useEffect(() => {
-        if (status === "authenticated") router.replace("/dashboard")
+        if (status === "authenticated") router.replace("/profile")
     }, [status])
 
 
