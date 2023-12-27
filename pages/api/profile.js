@@ -5,7 +5,6 @@ import { verifyPassword } from "@/utils/auth";
 
 async function handler(req, res) {
 
-
     // Connect to DB
     try {
         await connectDB();
@@ -25,36 +24,33 @@ async function handler(req, res) {
         })
     }
 
-    const user = User.findOne({ email: session.user.email });
+    const user = await User.findOne({ email: session.user.email });
 
     if (!user) {
         return res.status(404).json({ status: "Failed", message: "User not found" });
     }
 
-    const { name, lastName, password } = req.body;
 
-    const isValid = verifyPassword(password, user.password);
+    if (req.method === "POST") {
 
-    if (!isValid) {
-        return res.status(422).json({
-            status: "Failed",
-            message: "Password is incorrect"
-        })
+        const { name, lastName, password } = req.body;
+
+        const isValid = await verifyPassword(password, user.password);
+
+        if (!isValid) {
+            return res.status(422).json({
+                status: "Failed",
+                message: "Password is incorrect"
+            })
+        }
+
+        user.name = name;
+        user.lastName = lastName;
+        user.save();
+
+        return res.status(200).json({ status: "Success", message: "User info updated Successfully" });
+
     }
-
-    user.name = name;
-    user.lastName = lastName;
-
-    user.save();
-
-    return res.status(200).json({ status: "Success", message: "User info updated Successfully" });
-
-
-
-
-
-
-
 }
 
 export default handler;
