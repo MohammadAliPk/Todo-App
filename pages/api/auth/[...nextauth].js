@@ -29,6 +29,7 @@ const NextAuthConfig = {
             }
         })
     ],
+    secret: process.env.JWT_SECRET,
 }
 
 export default NextAuth(NextAuthConfig)
