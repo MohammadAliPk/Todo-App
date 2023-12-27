@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { signOut, useSession } from 'next-auth/react'
 
@@ -10,6 +10,8 @@ import { FiLogOut, FiLogIn } from 'react-icons/fi'
 
 function Layout({ children }) {
 
+    const [isOpen, setIsOpen] = useState(false)
+
     const { status } = useSession();
 
     const logOutHandler = () => {
@@ -20,10 +22,19 @@ function Layout({ children }) {
         <div className='container'>
             <header>
                 Todo App
+                <div className={isOpen ? "aside-close" : "menu-open__button"} onClick={() => setIsOpen(true)}>
+                    <div className='menu-lines'></div>
+                    <div className='menu-lines'></div>
+                    <div className='menu-lines'></div>
+                </div>
             </header>
             <div className='container--main'>
-                <aside>
+                <aside className={isOpen ? null : "aside-close"}>
                     <p>Welcome</p>
+                    <div className='menu-close__button' onClick={() => setIsOpen(false)}>
+                        <div className='menu-close-lines'></div>
+                        <div className='menu-close-lines'></div>
+                    </div>
                     {status === "authenticated" ?
                         <ul>
                             <li>

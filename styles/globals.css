@@ -24,6 +24,7 @@ header {
   padding: 20px 10px;
   display: flex;
   justify-content: space-between;
+  position: relative;
 }
 
 header button {
@@ -44,6 +45,56 @@ header button svg {
   min-height: calc(100vh - 150px);
 }
 
+.aside-close {
+  width: 0;
+  display: none;
+}
+
+.menu-open__button {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  position: absolute;
+  left: 20px;
+  bottom: 10px;
+}
+
+.menu-lines {
+  height: 4px;
+  width: 90%;
+  background-color: #fff;
+}
+
+.menu-close__button {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.menu-close-lines:first-child {
+  transform: rotate(45deg);
+  position: absolute;
+}
+
+.menu-close-lines:last-child {
+  transform: rotate(-45deg);
+}
+
+.menu-close-lines {
+  height: 4px;
+  width: 90%;
+  background-color: #3f47f4;
+}
+
 aside {
   background-color: #fff;
   width: 250px;
@@ -52,7 +103,9 @@ aside {
   border-top-right-radius: 20px;
   color: #7f7e86;
   padding: 30px 0 0 30px;
+  position: relative;
 }
+
 
 aside p {
   color: #494a52;
@@ -230,6 +283,7 @@ button {
 
 .home-page {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
 }
 
@@ -362,4 +416,13 @@ button {
 
 .signin-form a {
   color: #3f47f4;
+}
+
+@media (max-width: 480px) {
+  aside {
+    position: fixed;
+    bottom: unset;
+    width: 100%;
+    height: 100%;
+  }
 }
