@@ -44,12 +44,24 @@ async function handler(req, res) {
             })
         }
 
-        user.name = name;
-        user.lastName = lastName;
+        if (!name && !lastName) {
+            return res.status(422).json({ status: "Failed", message: "Please fill the boxes" });
+        } else if (name && !lastName) {
+            user.name = name;
+        } else if (!name && lastName) {
+            user.lastName = lastName;
+        } else {
+            user.name = name;
+            user.lastName = lastName;
+        }
         user.save();
 
         return res.status(200).json({ status: "Success", message: "User info updated Successfully" });
 
+    } else if (req.method === "GET") {
+        res.status(200).json({
+            status: "Success", data: { name: user.name, lastName: user.lastName, email: user.email }
+        });
     }
 }
 
