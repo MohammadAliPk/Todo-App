@@ -1,5 +1,6 @@
 import User from "@/models/User";
 import connectDB from "@/utils/connectDB";
+import { sortTodos } from "@/utils/sortTodos";
 import { getSession } from "next-auth/react";
 
 async function handler(req, res) {
@@ -40,6 +41,11 @@ async function handler(req, res) {
         res.status(200).json({
             status: "Success", message: "Todo List successfully updated"
         })
+
+    } else if (req.method == "GET") {
+        const sortedData = sortTodos(user.todos);
+
+        res.status(200).json({ status: "Success", data: { todos: sortedData } });
 
     }
 }
