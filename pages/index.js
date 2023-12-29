@@ -9,9 +9,9 @@ export default function Home() {
 }
 
 
-export async function getServerSideProps({ req }) {
+export async function getServerSideProps(context) {
 
-  const session = await getSession({ req });
+  const session = await getSession(context);
 
 
   if (!session) {
