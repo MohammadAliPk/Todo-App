@@ -1,6 +1,7 @@
 
 import DetailsPage from '@/components/templates/DetailsPage';
 import User from '@/models/User';
+import connectDB from '@/utils/connectDB';
 import { getSession } from 'next-auth/react';
 
 const Index = ({ todo }) => {
