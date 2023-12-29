@@ -39,15 +39,15 @@ function Layout({ children }) {
                         <ul>
                             <li>
                                 <VscListSelection />
-                                <Link href="/">Todos</Link>
+                                <Link href="/" onClick={() => setIsOpen(false)}>Todos</Link>
                             </li>
                             <li>
                                 <BiMessageSquareAdd />
-                                <Link href="/add-todo">Add Todo</Link>
+                                <Link href="/add-todo" onClick={() => setIsOpen(false)}>Add Todo</Link>
                             </li>
                             <li>
                                 <RxDashboard />
-                                <Link href="/profile">Profile</Link>
+                                <Link href="/profile" onClick={() => setIsOpen(false)}>Profile</Link>
                             </li>
                             <li>
                                 <button onClick={logOutHandler}><FiLogOut /></button>
