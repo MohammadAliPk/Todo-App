@@ -57,11 +57,11 @@ function Layout({ children }) {
                     {status === "unauthenticated" ? <ul>
                         <li>
                             <FiLogIn />
-                            <Link href="/login">Login</Link>
+                            <Link href="/login" onClick={() => setIsOpen(false)}>Login</Link>
                         </li>
                         <li>
                             <BiMessageSquareAdd />
-                            <Link href="/signup">Sign Up</Link>
+                            <Link href="/signup" onClick={() => setIsOpen(false)}>Sign Up</Link>
                         </li>
                     </ul> : null}
 
