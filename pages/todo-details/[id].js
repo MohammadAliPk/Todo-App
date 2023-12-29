@@ -15,6 +15,12 @@ export default Index;
 
 
 export async function getServerSideProps(context) {
+    try {
+        await connectDB();
+    } catch (err) {
+        console.log(err);
+    }
+
     const { params: { id } } = context;
 
     const session = await getSession(context);
