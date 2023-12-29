@@ -2,7 +2,6 @@
 import DetailsPage from '@/components/templates/DetailsPage';
 import User from '@/models/User';
 import { getSession } from 'next-auth/react';
-import { toast } from 'react-toastify';
 
 const Index = ({ todo }) => {
 
@@ -27,12 +26,6 @@ export async function getServerSideProps(context) {
                 permanent: false
             }
         }
-    }
-
-    try {
-        await connectDB();
-    } catch (err) {
-        toast.error(err.message)
     }
 
     const user = await User.findOne({ email: session.user.email });
