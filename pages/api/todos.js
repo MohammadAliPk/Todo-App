@@ -29,13 +29,13 @@ async function handler(req, res) {
 
 
     if (req.method == "POST") {
-        const { title, status } = req.body;
+        const { title, status, description } = req.body;
 
-        if (!title || !status) {
+        if (!title || !status || !description) {
             return res.status(422).json({ status: "Failed", message: "Please enter valid data" });
         }
 
-        user.todos.push({ title, status });
+        user.todos.push({ title, status, description });
         user.save();
 
         res.status(200).json({
@@ -49,7 +49,6 @@ async function handler(req, res) {
 
     } else if (req.method == "PATCH") {
         const { id, status } = req.body;
-        console.log(id, status);
 
         if (!id || !status) return res.status(422).json({ status: "Failed", message: "Please enter valid data" });
 

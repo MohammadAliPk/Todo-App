@@ -170,7 +170,8 @@ label {
   font-size: 1.3rem;
 }
 
-input {
+input,
+textarea {
   border: none;
   border-radius: 8px;
   margin-top: 5px;
@@ -182,6 +183,10 @@ input {
   height: 35px;
   outline: none;
   max-width: 500px;
+}
+
+textarea {
+  height: 100px;
 }
 
 .add-form__input--second {
@@ -384,6 +389,16 @@ button {
 .tasks .tasks__card div .button-back {
   background-color: #f8eccf;
   color: #e5a000;
+}
+
+.description {
+  color: #494a52;
+  display: inline-block !important;
+  font-size: 14px !important;
+  width: 250px !important;
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis;
 }
 
 .signin-form {

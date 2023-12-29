@@ -19,6 +19,7 @@ const userSchema = new Schema({
         {
             title: String,
             status: String,
+            description: String
         }
     ],
     createdAt: {

@@ -15,6 +15,7 @@ function AddTodoPage() {
 
     const [title, setTitle] = useState("");
     const [status, setStatus] = useState("todo");
+    const [description, setDescription] = useState("");
 
 
     const addHandler = async () => {
@@ -22,6 +23,7 @@ function AddTodoPage() {
             const res = await axios.post("/api/todos", {
                 title: title,
                 status: status,
+                description: description
             })
             toast.success(res.data.message);
         } catch (err) {
@@ -37,6 +39,10 @@ function AddTodoPage() {
                 <div className="add-form__input--first">
                     <label htmlFor="title">Title:</label>
                     <input type="text" value={title} id="title" onChange={(e) => setTitle(e.target.value)} />
+                </div>
+                <div className="add-form__input--first">
+                    <label htmlFor="description">Description:</label>
+                    <textarea id="description" onChange={(e) => setDescription(e.target.value)} />
                 </div>
                 <div className="add-form__input--second">
                     <RadioButton
@@ -70,7 +76,7 @@ function AddTodoPage() {
                 </div>
                 <button onClick={addHandler}>Add</button>
             </div>
-        </div>
+        </div >
     )
 }
 
