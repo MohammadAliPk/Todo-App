@@ -7,7 +7,7 @@ const Index = ({ todo }) => {
 
 
     return (
-        <DetailsPage todo={todo} />
+        <DetailsPage data={todo} />
     );
 };
 
@@ -27,4 +27,4 @@ export async function getServerSideProps(context) {
             todo
         },
     };
-}
+};
