@@ -333,6 +333,7 @@ button {
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
   padding: 15px;
   margin: 25px 15px;
+  position: relative;
 }
 
 .tasks .tasks__card span {
@@ -363,6 +364,14 @@ button {
   color: #494a52;
   font-size: 1.1rem;
   font-weight: 400;
+}
+
+.task-edit {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  font-size: 25px;
+  color: #494a52;
 }
 
 .tasks .tasks__card div {
@@ -431,6 +440,56 @@ button {
 
 .signin-form a {
   color: #3f47f4;
+}
+
+.details-container {
+  background-color: #fff;
+  width: 90%;
+  margin: auto;
+  padding: 30px;
+  border-radius: 10px;
+  position: relative;
+}
+
+.details-container h4 {
+  font-size: 30px;
+  margin: 10px;
+  width: 90%;
+}
+
+.details-container p {
+  line-height: 3em;
+  width: 90%;
+  margin: 20px auto;
+  color: #494a52;
+}
+
+.details-container span {
+  position: absolute;
+  right: 0;
+  top: 0;
+  color: white;
+  padding: 10px;
+  border-radius: 0 0 0 10px;
+  width: 100px;
+  text-align: center;
+  font-size: 15px;
+}
+
+.details-container .todo {
+  background-color: #f2b82e;
+}
+
+.details-container .inProgress {
+  background-color: #1be2b1;
+}
+
+.details-container .review {
+  background-color: #3f79f7;
+}
+
+.details-container .done {
+  background-color: #14d3e2;
 }
 
 @media (max-width: 480px) {

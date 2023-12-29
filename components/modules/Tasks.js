@@ -1,6 +1,8 @@
 import { RiMastodonLine } from "react-icons/ri"
 import { BiRightArrow, BiLeftArrow } from "react-icons/bi"
+import { LuPencilLine } from "react-icons/lu";
 import axios from "axios"
+import Link from "next/link";
 
 function Tasks({ data, next, back, fetchTodos }) {
     const changeStatus = async (id, status) => {
@@ -13,6 +15,11 @@ function Tasks({ data, next, back, fetchTodos }) {
         <div className='tasks'>
             {data?.map(i => (
                 <div key={i._id} className='tasks__card'>
+                    <div className="task-edit">
+                        <Link href={`/todo-details/${i._id}`}>
+                            <LuPencilLine />
+                        </Link>
+                    </div>
                     <span className={i.status}></span>
                     <RiMastodonLine />
                     <h4>{i.title}</h4>
