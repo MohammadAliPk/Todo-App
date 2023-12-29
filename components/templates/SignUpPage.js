@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"
@@ -28,6 +28,19 @@ function SignUpPage() {
             });
             const data = res.data;
             toast.success(data.message)
+
+            if (data.statusbar === "Success") {
+                const secRes = await signIn("credentials", {
+                    email,
+                    password,
+                    redirect: false
+                })
+                if (!secRes.error) {
+                    router.replace("/profile")
+                } else {
+                    toast.error(secRes.error);
+                }
+            }
 
         } catch (err) {
             const errMsg = err.response.data.message;
