@@ -48,7 +48,9 @@ const NextAuthConfig = {
         })
     ],
     secret: process.env.JWT_SECRET,
-    adapter: MongoDBAdapter(clientPromise),
+    adapter: MongoDBAdapter(clientPromise, {
+        collections: User,
+    }),
 }
 
 export default NextAuth(NextAuthConfig)
