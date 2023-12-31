@@ -41,7 +41,12 @@ const NextAuthConfig = {
         })
     ],
     callback: {
-        async signIn({ account, profile, user }) {
+        async session({ session }) {
+            const sessionUser = User.findOne({ email: session.user.email });
+            session.user.id = sessionUser._id;
+            return session;
+        },
+        async signIn({ account, profile }) {
             if (account.provider === "google") {
                 try {
                     await connectDB();
@@ -49,26 +54,19 @@ const NextAuthConfig = {
                     const userExist = await User.findOne({ email: profile.email });
 
                     if (!userExist) {
-                        const newUser = await User.create({
+                        const user = await User.create({
                             email: profile.email,
                             name: profile.name,
                         });
-
-                        return { ...user, newUser };
                     }
                 } catch (err) {
-                    console.error(err);
+                    return res.status(500).json({
+                        status: "Failed",
+                        message: "Error connecting to database"
+                    })
                 }
             }
-        },
-        async jwt(token, user) {
-            if (user) token.user = user;
-            return token;
-        },
-        async session(session, token) {
-            session.user = token.user;
-            return session;
-        },
+        }
     },
     secret: process.env.JWT_SECRET,
     adapter: MongoDBAdapter(clientPromise),
