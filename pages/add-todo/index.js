@@ -1,7 +1,8 @@
 import AddTodoPage from '@/components/templates/AddTodoPage'
 import { getSession } from 'next-auth/react';
 
-function Index() {
+function Index({ session }) {
+    console.log(session)
     return (
         <AddTodoPage />
     )
@@ -24,7 +25,7 @@ export async function getServerSideProps(context) {
     }
     return {
         props: {
-
+            session
         }
     }
 } 
