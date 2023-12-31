@@ -47,6 +47,32 @@ const NextAuthConfig = {
             }
         })
     ],
+    callback: {
+        async session({ session }) {
+            return session
+        },
+        async signIn({ profile }) {
+            if (account.provider === "google") {
+                try {
+                    await connectDB();
+
+                    const userExist = await User.findOne({ email: profile.email });
+
+                    if (!userExist) {
+                        const user = await User.create({
+                            email: profile.email,
+                            name: profile.name,
+                        });
+                    }
+                } catch (err) {
+                    return res.status(500).json({
+                        status: "Failed",
+                        message: "Error connecting to database"
+                    })
+                }
+            }
+        }
+    },
     secret: process.env.JWT_SECRET,
     adapter: MongoDBAdapter(clientPromise),
 }
