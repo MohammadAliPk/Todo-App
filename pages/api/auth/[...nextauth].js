@@ -49,7 +49,7 @@ const NextAuthConfig = {
     ],
     callback: {
         async session({ session }) {
-            return session
+            const sessionUser = User.findOne({ email: session.user.email });
         },
         async signIn({ profile }) {
             if (account.provider === "google") {
