@@ -48,18 +48,11 @@ const NextAuthConfig = {
                 const existUser = await User.findOne({ email: user.email });
 
                 if (!existUser) {
-                    const newUser = new User({
-                        name: user.name,
-                        lastName: user.lastName || "",
-                        password: "",
+                    const res = await axios.post({
                         email: user.email,
-                    });
-
-                    await newUser.save();
-
-                    return { success: true, user: newUser };
-                } else {
-                    return { success: false, message: "User already exists" };
+                        password: "12345678",
+                        name: user.name,
+                    })
                 }
             } catch (err) {
                 console.error("Error during sign-in:", err);
