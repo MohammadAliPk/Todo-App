@@ -3,8 +3,15 @@ import { verifyPassword } from "@/utils/auth";
 import connectDB from "@/utils/connectDB";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
+import clientPromise from "@/lib/mongodb";
+
 
 const NextAuthConfig = {
+    session: {
+        strategy: "jwt"
+    },
     providers: [
         CredentialsProvider({
             name: "Credentials",
@@ -27,9 +34,29 @@ const NextAuthConfig = {
 
                 return { email }
             }
+        }),
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+            authorization: {
+                params: {
+                    prompt: "consent",
+                    access_type: "offline",
+                    response_type: "code"
+                }
+            }
         })
     ],
+    callbacks: {
+        async signIn({ account, profile }) {
+            if (account.provider === "google") {
+                return profile.email_verified && profile.email.endsWith("@example.com")
+            }
+            return true
+        },
+    },
     secret: process.env.JWT_SECRET,
+    adapter: MongoDBAdapter(clientPromise),
 }
 
 export default NextAuth(NextAuthConfig)
