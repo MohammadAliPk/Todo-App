@@ -51,7 +51,7 @@ const NextAuthConfig = {
         async session({ session }) {
             const sessionUser = User.findOne({ email: session.user.email });
         },
-        async signIn({ profile }) {
+        async signIn({ account, profile }) {
             if (account.provider === "google") {
                 try {
                     await connectDB();
