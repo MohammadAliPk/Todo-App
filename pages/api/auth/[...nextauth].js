@@ -46,33 +46,26 @@ const NextAuthConfig = {
             session.user.id = sessionUser._id;
             return session;
         },
-        async signIn({ profile }) {
-            try {
-                await connectDB();
+        async signIn({ account, user }) {
+            if (account.provider === "google") {
+                try {
+                    await connectDB();
 
-                const userExist = await User.findOne({ email: profile.email });
+                    const existUser = await User.findOne({ email: user.email });
 
-                if (!userExist) {
-                    const newUser = await User.create({
-                        email: profile.email,
-                        name: profile.name,
-                        lastName: profile.lastName || '',
-                        password: '',
-                    });
-
-                    if (!newUser) {
-                        throw new Error("Failed to create a new user");
+                    if (!existUser) {
+                        const newUser = await User.create({
+                            name: user.name,
+                            lastName: user.lastName || "",
+                            password: "",
+                            email: user.email
+                        })
                     }
-
-                    return { id: newUser._id };
+                } catch (err) {
+                    console.log(err)
                 }
-
-                return { id: userExist._id };
-            } catch (err) {
-                console.error("Error connecting to database:", err);
-                throw new Error("Error connecting to the database");
             }
-        }
+        },
     },
 
     secret: process.env.JWT_SECRET,
