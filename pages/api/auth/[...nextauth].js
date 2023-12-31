@@ -61,6 +61,14 @@ const NextAuthConfig = {
                 }
             }
         },
+        async jwt(token, user) {
+            if (user) token.user = user;
+            return token;
+        },
+        async session(session, token) {
+            session.user = token.user;
+            return session;
+        },
     },
     secret: process.env.JWT_SECRET,
     adapter: MongoDBAdapter(clientPromise),
