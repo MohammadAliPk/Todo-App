@@ -62,6 +62,8 @@ const NextAuthConfig = {
                         const user = await User.create({
                             email: profile.email,
                             name: profile.name,
+                            todos: [],
+                            createdAt: () => Date.now(),
                         });
                     }
                 } catch (err) {
