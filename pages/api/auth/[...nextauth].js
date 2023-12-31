@@ -46,43 +46,33 @@ const NextAuthConfig = {
             session.user.id = sessionUser._id;
             return session;
         },
-        async signIn({ account, profile, user }) {
-            if (account.provider === "google") {
-                try {
-                    await connectDB();
+        async signIn({ profile }) {
+            try {
+                await connectDB();
 
-                    const userExist = await User.findOne({ email: profile.email });
+                const userExist = await User.findOne({ email: profile.email });
 
-                    if (!userExist) {
-                        const newUser = await User.findOneAndUpdate(
-                            { email: profile.email },
-                            {
-                                $setOnInsert: {
-                                    email: profile.email,
-                                    name: profile.name,
-                                    lastName: profile.lastName || '',
-                                    password: '',
-                                    todos: [],
-                                    createdAt: () => Date.now()
-                                },
-                            },
-                            { upsert: true, new: true }
-                        );
+                if (!userExist) {
+                    const newUser = await User.create({
+                        email: profile.email,
+                        name: profile.name,
+                        lastName: profile.lastName || '',
+                        password: '',
+                    });
 
-                        if (!newUser) {
-                            throw new Error("Failed to create a new user");
-                        }
-
-                        return { id: newUser._id };
+                    if (!newUser) {
+                        throw new Error("Failed to create a new user");
                     }
 
-                    return { id: userExist._id };
-                } catch (err) {
-                    console.error("Error connecting to database:", err);
-                    throw new Error("Error connecting to the database");
+                    return { id: newUser._id };
                 }
+
+                return { id: userExist._id };
+            } catch (err) {
+                console.error("Error connecting to database:", err);
+                throw new Error("Error connecting to the database");
             }
-        },
+        }
     },
 
     secret: process.env.JWT_SECRET,
