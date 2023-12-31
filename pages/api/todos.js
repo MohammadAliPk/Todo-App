@@ -28,7 +28,7 @@ async function handler(req, res) {
     }
 
 
-    if (req.method == "POST") {
+    if (req.method === "POST") {
         const { title, status, description } = req.body;
 
         if (!title || !status || !description) {
@@ -42,12 +42,12 @@ async function handler(req, res) {
             status: "Success", message: "Todo List successfully updated"
         })
 
-    } else if (req.method == "GET") {
+    } else if (req.method === "GET") {
         const sortedData = sortTodos(user.todos);
 
         res.status(200).json({ status: "Success", data: { todos: sortedData } });
 
-    } else if (req.method == "PATCH") {
+    } else if (req.method === "PATCH") {
         const { id, status } = req.body;
 
         if (!id || !status) return res.status(422).json({ status: "Failed", message: "Please enter valid data" });
