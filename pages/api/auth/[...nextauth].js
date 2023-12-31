@@ -52,15 +52,12 @@ const NextAuthConfig = {
                         const newUser = await User.create({
                             email: profile.email,
                             name: profile.name,
-                            // Add other fields as needed
                         });
 
-                        // Optionally, you can update the user object returned by the callback
                         return { ...user, newUser };
                     }
                 } catch (err) {
                     console.error(err);
-                    // Handle the error appropriately, e.g., send a response to the client
                 }
             }
         },
