@@ -60,6 +60,10 @@ const NextAuthConfig = {
                                 $setOnInsert: {
                                     email: profile.email,
                                     name: profile.name,
+                                    lastName: profile.lastName || '',
+                                    password: '',
+                                    todos: [],
+                                    createdAt: () => Date.now()
                                 },
                             },
                             { upsert: true, new: true }
@@ -75,11 +79,12 @@ const NextAuthConfig = {
                     return { id: userExist._id };
                 } catch (err) {
                     console.error("Error connecting to database:", err);
-                    throw new Error("Error connecting to database");
+                    throw new Error("Error connecting to the database");
                 }
             }
         },
     },
+
     secret: process.env.JWT_SECRET,
     adapter: MongoDBAdapter(clientPromise),
 }
