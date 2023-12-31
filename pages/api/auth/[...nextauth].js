@@ -49,7 +49,7 @@ const NextAuthConfig = {
                 const existUser = await User.findOne({ email: user.email });
 
                 if (!existUser) {
-                    const res = await axios.post({
+                    const res = await axios.post("/api/auth/signup", {
                         email: user.email,
                         password: "12345678",
                         name: user.name,
