@@ -41,32 +41,34 @@ const NextAuthConfig = {
         })
     ],
     callback: {
-        async session({ session }) {
-            const sessionUser = User.findOne({ email: session.user.email });
-            session.user.id = sessionUser._id;
-            return session;
-        },
         async signIn({ account, user }) {
-            if (account.provider === "google") {
-                try {
-                    await connectDB();
+            try {
+                await connectDB();
 
-                    const existUser = await User.findOne({ email: user.email });
+                const existUser = await User.findOne({ email: user.email });
 
-                    if (!existUser) {
-                        const newUser = await User.create({
-                            name: user.name,
-                            lastName: user.lastName || "",
-                            password: "",
-                            email: user.email
-                        })
-                    }
-                } catch (err) {
-                    console.log(err)
+                if (!existUser) {
+                    const newUser = new User({
+                        name: user.name,
+                        lastName: user.lastName || "",
+                        password: "",
+                        email: user.email,
+                    });
+
+                    await newUser.save();
+
+                    return { success: true, user: newUser };
+                } else {
+                    return { success: false, message: "User already exists" };
                 }
+            } catch (err) {
+                console.error("Error during sign-in:", err);
+
+                return { success: false, message: "Sign-in failed" };
             }
         },
     },
+
 
     secret: process.env.JWT_SECRET,
     adapter: MongoDBAdapter(clientPromise),
