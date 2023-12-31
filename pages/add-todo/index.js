@@ -1,8 +1,9 @@
 import AddTodoPage from '@/components/templates/AddTodoPage'
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 
-function Index({ session }) {
-    console.log(session)
+function Index() {
+    const { status } = useSession();
+    console.log(status)
     return (
         <AddTodoPage />
     )
