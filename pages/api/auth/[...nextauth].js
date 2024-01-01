@@ -49,11 +49,7 @@ const NextAuthConfig = {
                 const existUser = await User.findOne({ email: user.email });
 
                 if (!existUser) {
-                    const res = await axios.post("/api/auth/signup", {
-                        email: user.email,
-                        password: "12345678",
-                        name: user.name,
-                    })
+                    const newUser = await User.create({ email: user.email, password: "" });
                 }
             } catch (err) {
                 console.error("Error during sign-in:", err);
@@ -62,14 +58,12 @@ const NextAuthConfig = {
             }
         },
         async jwt({ token, user }) {
-            // Persist the OAuth access_token to the token right after signin
             if (user) {
                 token.accessToken = user.token;
             }
             return token;
         },
         async session({ session, token, user }) {
-            // Send properties to the client, like an access_token from a provider.
             session.accessToken = token.accessToken;
             return session;
         },
