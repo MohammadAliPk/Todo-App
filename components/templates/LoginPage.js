@@ -3,7 +3,6 @@ import { signIn, useSession } from "next-auth/react"
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import GoogleButton from "../elements/GoogleButton";
 
 function LoginPage() {
 
@@ -43,7 +42,6 @@ function LoginPage() {
                 <p>Create an account?</p>
                 <Link href="/signup">Sign up</Link>
             </div>
-            <GoogleButton />
         </div>
     )
 }

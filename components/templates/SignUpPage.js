@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react"
 import { toast } from "react-toastify";
-import GoogleButton from "../elements/GoogleButton";
 
 
 function SignUpPage() {
@@ -61,7 +60,6 @@ function SignUpPage() {
                 <p>Have an account?</p>
                 <Link href="/login">Login</Link>
             </div>
-            <GoogleButton />
         </div>
     )
 }

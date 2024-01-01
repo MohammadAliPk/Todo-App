@@ -44,4 +44,4 @@ const NextAuthConfig = {
     adapter: MongoDBAdapter(clientPromise),
 }
 
-export default NextAuth(NextAuthConfig)
+export default NextAuth(NextAuthConfig);
