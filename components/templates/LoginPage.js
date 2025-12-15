@@ -17,7 +17,7 @@ function LoginPage() {
 
     useEffect(() => {
         if (status === "authenticated") router.replace("/")
-    }, [status])
+    }, [status, router])
 
 
     const loginHandler = async () => {
@@ -91,7 +91,7 @@ function LoginPage() {
 
                     <div className="text-center mt-6">
                         <p className="text-gray-600">
-                            Don't have an account?{' '}
+                            Don&apos;t have an account?{' '}
                             <Link href="/signup" className="text-blue-600 hover:text-blue-700 font-semibold hover:underline">
                                 Sign up
                             </Link>

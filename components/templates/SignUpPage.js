@@ -18,7 +18,7 @@ function SignUpPage() {
 
     useEffect(() => {
         if (status === "authenticated") router.replace("/")
-    }, [status])
+    }, [status, router])
 
 
 
