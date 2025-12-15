@@ -19,7 +19,21 @@ const userSchema = new Schema({
         {
             title: String,
             status: String,
-            description: String
+            description: String,
+            priority: {
+                type: String,
+                enum: ['low', 'medium', 'high'],
+                default: 'medium'
+            },
+            dueDate: Date,
+            category: {
+                type: String,
+                default: 'General'
+            },
+            createdAt: {
+                type: Date,
+                default: () => Date.now(),
+            }
         }
     ],
     createdAt: {

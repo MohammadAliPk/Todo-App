@@ -29,13 +29,20 @@ async function handler(req, res) {
 
 
     if (req.method === "POST") {
-        const { title, status, description } = req.body;
+        const { title, status, description, priority, dueDate, category } = req.body;
 
-        if (!title || !status || !description) {
+        if (!title || !status) {
             return res.status(422).json({ status: "Failed", message: "Please enter valid data" });
         }
 
-        user.todos.push({ title, status, description });
+        user.todos.push({ 
+            title, 
+            status, 
+            description,
+            priority: priority || 'medium',
+            dueDate: dueDate || null,
+            category: category || 'General'
+        });
         user.save();
 
         res.status(200).json({
@@ -57,4 +64,4 @@ async function handler(req, res) {
         res.status(200).json({ status: "Success", message: "Todo List successfully updated" });
     }
 }
-export default handler; 
+export default handler;

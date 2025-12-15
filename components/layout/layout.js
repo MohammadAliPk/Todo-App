@@ -1,78 +1,42 @@
-import React, { useState } from 'react'
-import Link from 'next/link'
-import { signOut, useSession } from 'next-auth/react'
-
-// Icons
-import { VscListSelection } from "react-icons/vsc"
-import { RxDashboard } from "react-icons/rx"
-import { BiMessageSquareAdd } from "react-icons/bi"
-import { FiLogOut, FiLogIn } from 'react-icons/fi'
+import Link from 'next/link';
+import { VscListSelection, VscDashboard, VscSettingsGear } from 'react-icons/vsc';
+import { BiLogOut } from 'react-icons/bi';
+import { signOut, useSession } from 'next-auth/react';
 
 function Layout({ children }) {
-
-    const [isOpen, setIsOpen] = useState(false)
-
     const { status } = useSession();
 
-    const logOutHandler = () => {
+    const logoutHandler = () => {
         signOut();
-    }
+    };
 
     return (
-        <div className='container'>
-            <header>
-                Todo App
-                <div className={isOpen ? "aside-close" : "menu-open__button"} onClick={() => setIsOpen(true)}>
-                    <div className='menu-lines'></div>
-                    <div className='menu-lines'></div>
-                    <div className='menu-lines'></div>
+        <div className="flex min-h-screen bg-gray-50">
+            <aside className="w-64 bg-white shadow-md hidden md:flex flex-col justify-between p-6 fixed h-full z-10">
+                <div>
+                    <h1 className="text-2xl font-bold text-blue-600 mb-10 flex items-center gap-2">
+                        <VscListSelection /> Todo App
+                    </h1>
+                    <nav className="space-y-4">
+                        <Link href="/" className="flex items-center gap-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                            <VscDashboard className="text-xl" /> Dashboard
+                        </Link>
+                        <Link href="/profile" className="flex items-center gap-3 text-gray-600 hover:text-blue-600 hover:bg-blue-50 p-2 rounded-lg transition-colors">
+                            <VscSettingsGear className="text-xl" /> Settings
+                        </Link>
+                    </nav>
                 </div>
-            </header>
-            <div className='container--main'>
-                <aside className={isOpen ? null : "aside-close"}>
-                    <p>Welcome</p>
-                    <div className='menu-close__button' onClick={() => setIsOpen(false)}>
-                        <div className='menu-close-lines'></div>
-                        <div className='menu-close-lines'></div>
-                    </div>
-                    {status === "authenticated" ?
-                        <ul>
-                            <li>
-                                <VscListSelection />
-                                <Link href="/" onClick={() => setIsOpen(false)}>Todos</Link>
-                            </li>
-                            <li>
-                                <BiMessageSquareAdd />
-                                <Link href="/add-todo" onClick={() => setIsOpen(false)}>Add Todo</Link>
-                            </li>
-                            <li>
-                                <RxDashboard />
-                                <Link href="/profile" onClick={() => setIsOpen(false)}>Profile</Link>
-                            </li>
-                            <li>
-                                <button onClick={logOutHandler}><FiLogOut /></button>
-                            </li>
-                        </ul> : null
-                    }
-                    {status === "unauthenticated" ? <ul>
-                        <li>
-                            <FiLogIn />
-                            <Link href="/login" onClick={() => setIsOpen(false)}>Login</Link>
-                        </li>
-                        <li>
-                            <BiMessageSquareAdd />
-                            <Link href="/signup" onClick={() => setIsOpen(false)}>Sign Up</Link>
-                        </li>
-                    </ul> : null}
-
-                </aside>
-                <section>
-                    {children}
-                </section>
-            </div>
-
+                {status === "authenticated" && (
+                    <button onClick={logoutHandler} className="flex items-center gap-2 text-red-500 hover:bg-red-50 p-2 rounded-lg transition-colors w-full">
+                        <BiLogOut className="text-xl" /> Logout
+                    </button>
+                )}
+            </aside>
+            <main className="flex-1 md:ml-64 p-8">
+                {children}
+            </main>
         </div>
-    )
+    );
 }
 
-export default Layout
+export default Layout;

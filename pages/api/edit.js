@@ -28,13 +28,25 @@ async function handler(req, res) {
         return res.status(404).json({ status: "Failed", message: "User not found" });
     }
 
-    const { id, status, title, description } = req.body;
+    const { id, status, title, description, priority, dueDate, category } = req.body;
 
-    if (!id || !status || !title || !description) return res.status(422).json({ status: "Failed", message: "Please enter valid data" });
+    if (!id || !status || !title) return res.status(422).json({ status: "Failed", message: "Please enter valid data" });
 
-    const result = await User.updateOne({ "todos._id": id }, { $set: { "todos.$.status": status, "todos.$.title": title, "todos.$.description": description } });
+    const result = await User.updateOne(
+        { "todos._id": id }, 
+        { 
+            $set: { 
+                "todos.$.status": status, 
+                "todos.$.title": title, 
+                "todos.$.description": description,
+                "todos.$.priority": priority,
+                "todos.$.dueDate": dueDate,
+                "todos.$.category": category
+            } 
+        }
+    );
 
     res.status(200).json({ status: "Success", message: "Todo successfully updated" });
 
 }
-export default handler; 
+export default handler;
