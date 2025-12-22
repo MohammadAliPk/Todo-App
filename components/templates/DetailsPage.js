@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 import { LuPencilLine } from "react-icons/lu";
 import { FiCalendar, FiFlag, FiTag, FiTrash2 } from "react-icons/fi";
@@ -22,9 +22,7 @@ function DetailsPage({ data }) {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-  const {
-    query: { id },
-  } = router;
+  const id = data._id;
 
   const priorityColors = {
     high: "bg-red-100 text-red-600",
