@@ -1,3 +1,5 @@
+'use client';
+
 import { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import axios from "axios";

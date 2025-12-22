@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Link from "next/link";
 import { FiEdit2, FiTrash2, FiCalendar, FiFlag, FiTag } from "react-icons/fi";

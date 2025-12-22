@@ -1,3 +1,5 @@
+"use client";
+
 import { FiFilter, FiSearch } from "react-icons/fi";
 
 function FilterBar({ filter, setFilter }) {

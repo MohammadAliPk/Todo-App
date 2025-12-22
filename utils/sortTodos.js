@@ -1,11 +1,18 @@
-function sortTodos(todos) {
-    const sortedData = {};
-    todos.map(todo => {
-        if (!sortedData[todo.status]) sortedData[todo.status] = [];
+function sortTodos(todos = []) {
+  const sortedData = {
+    todo: [],
+    inProgress: [],
+    review: [],
+    done: []
+  };
 
-        sortedData[todo.status].push(todo);
-    });
-    return sortedData;
+  todos.forEach(todo => {
+    const bucket = sortedData[todo.status] || [];
+    bucket.push(todo);
+    sortedData[todo.status] = bucket;
+  });
+
+  return sortedData;
 }
 
 export { sortTodos };
