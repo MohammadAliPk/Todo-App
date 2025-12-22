@@ -4,64 +4,94 @@ import { sortTodos } from "@/utils/sortTodos";
 import { getSession } from "next-auth/react";
 
 async function handler(req, res) {
+  try {
+    await connectDB();
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      status: "Failed",
+      message: "Error connecting to database"
+    });
+  }
 
-    try {
-        await connectDB();
-    } catch (err) {
-        console.log(err);
-        return res.status(500).json({
-            status: "Failed",
-            message: "Error connecting to database"
-        })
+  const session = await getSession({ req });
+
+  if (!session) {
+    return res.status(401).json({ status: "Failed", message: "Please Login" });
+  }
+
+  const user = await User.findOne({ email: session.user.email });
+
+  if (!user) {
+    return res
+      .status(404)
+      .json({ status: "Failed", message: "User not found" });
+  }
+
+  if (req.method === "POST") {
+    const {
+      title,
+      status,
+      description,
+      priority,
+      dueDate,
+      category
+    } = req.body;
+
+    if (!title || !status) {
+      return res
+        .status(422)
+        .json({ status: "Failed", message: "Please enter valid data" });
     }
 
-    const session = await getSession({ req });
+    user.todos.push({
+      title,
+      status,
+      description,
+      priority: priority || "medium",
+      dueDate: dueDate || null,
+      category: category || "General"
+    });
+    user.save();
 
-    if (!session) {
-        return res.status(401).json({ status: "Failed", message: "Please Login" });
+    res.status(200).json({
+      status: "Success",
+      message: "Todo List successfully updated"
+    });
+  } else if (req.method === "GET") {
+    const sortedData = sortTodos(user.todos);
+
+    res.status(200).json({ status: "Success", data: { todos: sortedData } });
+  } else if (req.method === "PATCH") {
+    const { id, status } = req.body;
+
+    if (!id || !status)
+      return res
+        .status(422)
+        .json({ status: "Failed", message: "Please enter valid data" });
+
+    await User.updateOne(
+      { "todos._id": id },
+      { $set: { "todos.$.status": status } }
+    );
+
+    res
+      .status(200)
+      .json({ status: "Success", message: "Todo List successfully updated" });
+  } else if (req.method === "DELETE") {
+    const { id } = req.body;
+
+    if (!id) {
+      return res
+        .status(422)
+        .json({ status: "Failed", message: "Todo id is required" });
     }
 
-    const user = await User.findOne({ email: session.user.email });
+    await User.updateOne({ _id: user._id }, { $pull: { todos: { _id: id } } });
 
-    if (!user) {
-        return res.status(404).json({ status: "Failed", message: "User not found" });
-    }
-
-
-    if (req.method === "POST") {
-        const { title, status, description, priority, dueDate, category } = req.body;
-
-        if (!title || !status) {
-            return res.status(422).json({ status: "Failed", message: "Please enter valid data" });
-        }
-
-        user.todos.push({ 
-            title, 
-            status, 
-            description,
-            priority: priority || 'medium',
-            dueDate: dueDate || null,
-            category: category || 'General'
-        });
-        user.save();
-
-        res.status(200).json({
-            status: "Success", message: "Todo List successfully updated"
-        })
-
-    } else if (req.method === "GET") {
-        const sortedData = sortTodos(user.todos);
-
-        res.status(200).json({ status: "Success", data: { todos: sortedData } });
-
-    } else if (req.method === "PATCH") {
-        const { id, status } = req.body;
-
-        if (!id || !status) return res.status(422).json({ status: "Failed", message: "Please enter valid data" });
-
-        const result = await User.updateOne({ "todos._id": id }, { $set: { "todos.$.status": status } });
-
-        res.status(200).json({ status: "Success", message: "Todo List successfully updated" });
-    }
+    res
+      .status(200)
+      .json({ status: "Success", message: "Todo successfully deleted" });
+  }
 }
 export default handler;
