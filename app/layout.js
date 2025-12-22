@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 
-import Providers from "@/components/providers/Providers";
-import Layout from "@/components/layout/Layout";
+import Providers from "../components/providers/Providers";
+import Layout from "../components/layout/Layout";
 
 export const metadata = {
   title: "Todo App",
