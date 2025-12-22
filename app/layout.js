@@ -1,7 +1,7 @@
 import "../styles/globals.css";
 
 import Providers from "../components/providers/Providers";
-import Layout from "../components/layout/Layout";
+import MainLayout from "../components/mainLayout/MainLayout";
 
 export const metadata = {
   title: "Todo App",
@@ -13,9 +13,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Providers>
-          <Layout>
+          <MainLayout>
             {children}
-          </Layout>
+          </MainLayout>
         </Providers>
       </body>
     </html>

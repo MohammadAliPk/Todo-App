@@ -9,7 +9,7 @@ import {
 import { BiLogOut } from "react-icons/bi";
 import { signOut, useSession } from "next-auth/react";
 
-function Layout({ children }) {
+function MainLayout({ children }) {
   const { status } = useSession();
 
   const logoutHandler = () => {
@@ -53,4 +53,4 @@ function Layout({ children }) {
   );
 }
 
-export default Layout;
+export default MainLayout;
