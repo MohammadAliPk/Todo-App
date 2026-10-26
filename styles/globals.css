@@ -3,7 +3,86 @@
 @tailwind utilities;
 
 @layer base {
-  body {
-    @apply bg-gray-50 text-gray-900;
+  html {
+    scroll-behavior: smooth;
   }
+
+  body {
+    @apply bg-mist text-ink font-sans antialiased;
+    background-image: theme("backgroundImage.mesh");
+    background-attachment: fixed;
+    min-height: 100vh;
+  }
+
+  ::selection {
+    @apply bg-tide/25 text-ink;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-white/70 backdrop-blur-xl border border-white/60 shadow-glass;
+  }
+
+  .glass-panel-strong {
+    @apply bg-white/85 backdrop-blur-2xl border border-white/70 shadow-depth;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-tide px-5 py-3
+      font-semibold text-white shadow-lift transition-all duration-300
+      hover:bg-tide-bright hover:-translate-y-0.5 hover:shadow-depth
+      active:translate-y-0 active:scale-[0.98] disabled:opacity-70 disabled:pointer-events-none;
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm
+      font-medium text-ink-soft transition-all duration-200
+      hover:bg-tide/10 hover:text-tide;
+  }
+
+  .btn-danger {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-3 py-1.5 text-xs
+      font-medium text-coral bg-coral/10 transition-colors hover:bg-coral/20;
+  }
+
+  .field-input {
+    @apply w-full rounded-xl border border-ink/10 bg-white/80 px-4 py-2.5 text-sm
+      text-ink outline-none transition-all duration-200
+      placeholder:text-ink-mute/60
+      focus:border-tide/40 focus:ring-4 focus:ring-tide/15;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-ink-soft;
+  }
+
+  .priority-chip {
+    @apply inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-bold uppercase tracking-wide;
+  }
+
+  .column-rail {
+    @apply relative rounded-2xl border border-white/50 bg-white/40 p-4 backdrop-blur-md
+      shadow-[inset_0_1px_0_rgba(255,255,255,0.8)];
+    transform-style: preserve-3d;
+  }
+
+  .scene-3d {
+    perspective: 1200px;
+    transform-style: preserve-3d;
+  }
+
+  .shape-3d {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+  }
+}
+
+/* react-datepicker soft theme */
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+.react-datepicker__input-container input {
+  @apply field-input;
 }

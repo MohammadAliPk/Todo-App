@@ -1,34 +1,43 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { FiFilter, FiSearch } from "react-icons/fi";
 
 function FilterBar({ filter, setFilter }) {
   return (
-    <div className="flex flex-col md:flex-row md:items-center gap-3 mb-6 bg-white p-4 rounded-xl shadow-sm border border-gray-100">
-      <div className="flex items-center gap-2 text-gray-500">
-        <FiFilter />
-        <span className="font-medium text-sm">Filters</span>
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.15, duration: 0.4 }}
+      className="glass-panel mb-8 flex flex-col gap-3 rounded-2xl p-4 md:flex-row md:items-center"
+    >
+      <div className="flex items-center gap-2 text-tide">
+        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-tide/10">
+          <FiFilter />
+        </span>
+        <span className="text-sm font-semibold text-ink-soft">Filters</span>
       </div>
 
-      <div className="flex-1 flex flex-col md:flex-row gap-3 md:items-center">
-        <div className="relative flex-1 min-w-[180px]">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
+      <div className="flex flex-1 flex-col gap-3 md:flex-row md:items-center">
+        <div className="relative min-w-[180px] flex-1">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-ink-mute">
             <FiSearch className="text-sm" />
           </div>
           <input
             type="text"
             value={filter.search}
             onChange={e =>
-              setFilter({ ...filter, search: e.target.value || "" })}
+              setFilter({ ...filter, search: e.target.value || "" })
+            }
             placeholder="Search tasks by title or description"
-            className="w-full pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-100 focus:border-blue-300 outline-none"
+            className="field-input pl-9"
           />
         </div>
 
         <select
           value={filter.priority}
           onChange={e => setFilter({ ...filter, priority: e.target.value })}
-          className="border border-gray-200 bg-gray-50 rounded-lg px-3 py-2 text-sm text-gray-600 focus:ring-2 focus:ring-blue-100 focus:border-blue-300 outline-none md:w-48"
+          className="field-input md:w-48"
         >
           <option value="all">All priorities</option>
           <option value="high">High</option>
@@ -36,7 +45,7 @@ function FilterBar({ filter, setFilter }) {
           <option value="low">Low</option>
         </select>
       </div>
-    </div>
+    </motion.div>
   );
 }
 

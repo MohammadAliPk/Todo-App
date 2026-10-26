@@ -1,11 +1,46 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import TodoCard from "../modules/TodoCard";
 import TodoForm from "../modules/TodoForm";
 import FilterBar from "../modules/FilterBar";
 import { FiPlus } from "react-icons/fi";
 
+const columns = [
+  {
+    key: "todo",
+    title: "To Do",
+    next: "inProgress",
+    accent: "from-ink-mute/30 to-ink-mute/5",
+    badge: "bg-ink/10 text-ink-soft"
+  },
+  {
+    key: "inProgress",
+    title: "In Progress",
+    next: "review",
+    back: "todo",
+    accent: "from-tide/40 to-tide/5",
+    badge: "bg-tide/15 text-tide"
+  },
+  {
+    key: "review",
+    title: "Review",
+    next: "done",
+    back: "inProgress",
+    accent: "from-ember/40 to-ember/5",
+    badge: "bg-ember/15 text-ember"
+  },
+  {
+    key: "done",
+    title: "Done",
+    back: "review",
+    accent: "from-tide-glow/40 to-tide-glow/5",
+    badge: "bg-tide-glow/20 text-tide"
+  }
+];
+
+/** Animation #2 — staggered Kanban columns + cards */
 function HomePage() {
   const [todos, setTodos] = useState({
     todo: [],
@@ -44,107 +79,102 @@ function HomePage() {
     });
   };
 
+  const total =
+    (todos.todo?.length || 0) +
+    (todos.inProgress?.length || 0) +
+    (todos.review?.length || 0) +
+    (todos.done?.length || 0);
+
   return (
     <div className="relative">
-      <div className="flex justify-between items-center mb-8 gap-4 flex-wrap">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.45 }}
+        className="mb-8 flex flex-wrap items-end justify-between gap-4"
+      >
         <div>
-          <h2 className="text-3xl font-bold text-gray-800">Dashboard</h2>
-          <p className="text-gray-500 mt-1">
-            Manage your tasks efficiently with a clear Kanban view.
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-tide">
+            Your workspace
+          </p>
+          <h2 className="font-display text-4xl font-bold tracking-tight text-ink md:text-5xl">
+            Flowboard
+          </h2>
+          <p className="mt-2 max-w-md text-ink-mute">
+            {total} tasks in motion — drag momentum across the board and finish
+            strong.
           </p>
         </div>
-        <button
+
+        <motion.button
+          whileHover={{ scale: 1.03, rotate: -1 }}
+          whileTap={{ scale: 0.97 }}
           onClick={() => setShowForm(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg shadow-blue-200 flex items-center gap-2 transition-all"
+          className="btn-primary"
         >
           <FiPlus size={20} /> Add Task
-        </button>
-      </div>
+        </motion.button>
+      </motion.div>
 
       <FilterBar filter={filter} setFilter={setFilter} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 overflow-x-auto pb-4">
-        <div className="min-w-[280px]">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-gray-700">To Do</h3>
-            <span className="bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full text-xs font-bold">
-              {filterTodos(todos.todo).length}
-            </span>
-          </div>
-          <div className="space-y-4">
-            {filterTodos(todos.todo).map(todo =>
-              <TodoCard
-                key={todo._id}
-                todo={todo}
-                next="inProgress"
-                fetchTodos={fetchTodos}
+      <div className="scene-3d grid grid-cols-1 gap-5 overflow-x-auto pb-4 md:grid-cols-2 lg:grid-cols-4">
+        {columns.map((col, i) => {
+          const list = filterTodos(todos[col.key]);
+          return (
+            <motion.div
+              key={col.key}
+              initial={{ opacity: 0, y: 36, rotateX: 12 }}
+              animate={{ opacity: 1, y: 0, rotateX: 0 }}
+              transition={{
+                delay: 0.12 + i * 0.08,
+                type: "spring",
+                stiffness: 160,
+                damping: 18
+              }}
+              className="column-rail min-w-[260px]"
+            >
+              <div
+                className={`pointer-events-none absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r ${col.accent}`}
               />
-            )}
-          </div>
-        </div>
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="font-display text-sm font-bold uppercase tracking-wider text-ink-soft">
+                  {col.title}
+                </h3>
+                <span
+                  className={`rounded-lg px-2 py-0.5 text-xs font-bold ${col.badge}`}
+                >
+                  {list.length}
+                </span>
+              </div>
 
-        <div className="min-w-[280px]">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-gray-700">In Progress</h3>
-            <span className="bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full text-xs font-bold">
-              {filterTodos(todos.inProgress).length}
-            </span>
-          </div>
-          <div className="space-y-4">
-            {filterTodos(todos.inProgress).map(todo =>
-              <TodoCard
-                key={todo._id}
-                todo={todo}
-                next="review"
-                back="todo"
-                fetchTodos={fetchTodos}
-              />
-            )}
-          </div>
-        </div>
+              <div className="min-h-[120px] space-y-0">
+                <AnimatePresence mode="popLayout">
+                  {list.map(todo => (
+                    <TodoCard
+                      key={todo._id}
+                      todo={todo}
+                      next={col.next}
+                      back={col.back}
+                      fetchTodos={fetchTodos}
+                    />
+                  ))}
+                </AnimatePresence>
 
-        <div className="min-w-[280px]">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-gray-700">Review</h3>
-            <span className="bg-yellow-100 text-yellow-600 px-2 py-0.5 rounded-full text-xs font-bold">
-              {filterTodos(todos.review).length}
-            </span>
-          </div>
-          <div className="space-y-4">
-            {filterTodos(todos.review).map(todo =>
-              <TodoCard
-                key={todo._id}
-                todo={todo}
-                next="done"
-                back="inProgress"
-                fetchTodos={fetchTodos}
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="min-w-[280px]">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-bold text-gray-700">Done</h3>
-            <span className="bg-green-100 text-green-600 px-2 py-0.5 rounded-full text-xs font-bold">
-              {filterTodos(todos.done).length}
-            </span>
-          </div>
-          <div className="space-y-4">
-            {filterTodos(todos.done).map(todo =>
-              <TodoCard
-                key={todo._id}
-                todo={todo}
-                back="review"
-                fetchTodos={fetchTodos}
-              />
-            )}
-          </div>
-        </div>
+                {list.length === 0 && (
+                  <div className="rounded-xl border border-dashed border-ink/10 px-3 py-8 text-center text-xs text-ink-mute">
+                    Empty lane — add a task to fill the flow.
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
-      {showForm &&
-        <TodoForm fetchTodos={fetchTodos} setShowForm={setShowForm} />}
+      {showForm && (
+        <TodoForm fetchTodos={fetchTodos} setShowForm={setShowForm} />
+      )}
     </div>
   );
 }

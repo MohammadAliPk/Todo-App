@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import axios from "axios";
 import { signIn, useSession } from "next-auth/react";
@@ -6,8 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 import { FiMail, FiLock, FiUserPlus } from "react-icons/fi";
-
 
 function SignUpPage() {
   const [email, setEmail] = useState("");
@@ -15,7 +15,6 @@ function SignUpPage() {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-
   const { status } = useSession();
 
   useEffect(() => {
@@ -31,7 +30,7 @@ function SignUpPage() {
     try {
       const res = await axios.post("/api/auth/signup", {
         email,
-        password,
+        password
       });
       const data = res.data;
 
@@ -40,7 +39,7 @@ function SignUpPage() {
         const secRes = await signIn("credentials", {
           email,
           password,
-          redirect: false,
+          redirect: false
         });
         if (!secRes.error) {
           router.replace("/");
@@ -59,84 +58,96 @@ function SignUpPage() {
     }
   };
 
-
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-gray-100">
-        <div className="text-center mb-8">
-          <h3 className="text-3xl font-bold text-gray-800 mb-2">
+    <div className="flex min-h-screen items-center justify-center px-4 py-12">
+      <motion.div
+        initial={{ opacity: 0, y: 32, rotateX: 14 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0 }}
+        transition={{ type: "spring", stiffness: 160, damping: 18 }}
+        style={{ transformPerspective: 1000 }}
+        className="glass-panel-strong relative w-full max-w-md overflow-hidden rounded-3xl p-8"
+      >
+        <div
+          className="pointer-events-none absolute -left-8 -top-8 h-32 w-32 rounded-full bg-gradient-to-tr from-ember-soft/45 to-ember/15"
+          style={{
+            boxShadow: "10px 16px 28px rgba(217,119,6,0.2)"
+          }}
+        />
+
+        <div className="relative mb-8 text-center">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-tide">
+            Flowboard
+          </p>
+          <h3 className="font-display text-3xl font-bold text-ink">
             Create Account
           </h3>
-          <p className="text-gray-500">
-            Join us to start managing your tasks
+          <p className="mt-2 text-ink-mute">
+            Join and start shipping tasks with style.
           </p>
         </div>
 
-        <div className="space-y-6">
+        <div className="relative space-y-5">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Email Address
-            </label>
+            <label className="field-label">Email Address</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FiMail className="text-gray-400" />
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <FiMail className="text-ink-mute" />
               </div>
               <input
                 type="text"
                 placeholder="name@example.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                onChange={e => setEmail(e.target.value)}
+                className="field-input pl-10"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Password
-            </label>
+            <label className="field-label">Password</label>
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <FiLock className="text-gray-400" />
+              <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                <FiLock className="text-ink-mute" />
               </div>
               <input
                 type="password"
                 placeholder="Create a strong password"
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                onChange={e => setPassword(e.target.value)}
+                className="field-input pl-10"
               />
             </div>
           </div>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={signUpHandler}
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition-colors shadow-lg shadow-blue-200 flex items-center justify-center gap-2"
+            className="btn-primary w-full"
           >
-            {loading ? "Creating Account..." : (
+            {loading ? (
+              "Creating Account..."
+            ) : (
               <>
                 <FiUserPlus /> Register
               </>
             )}
-          </button>
+          </motion.button>
 
-          <div className="text-center mt-6">
-            <p className="text-gray-600">
-              Already have an account?{" "}
-              <Link
-                href="/login"
-                className="text-blue-600 hover:text-blue-700 font-semibold hover:underline"
-              >
-                Login
-              </Link>
-            </p>
-          </div>
+          <p className="text-center text-sm text-ink-mute">
+            Already have an account?{" "}
+            <Link
+              href="/login"
+              className="font-semibold text-tide hover:text-tide-bright"
+            >
+              Login
+            </Link>
+          </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
 
-export default SignUpPage
+export default SignUpPage;

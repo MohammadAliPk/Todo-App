@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 import { LuPencilLine } from "react-icons/lu";
 import { FiCalendar, FiFlag, FiTag, FiTrash2 } from "react-icons/fi";
 import DatePicker from "react-datepicker";
@@ -25,16 +26,16 @@ function DetailsPage({ data }) {
   const id = data._id;
 
   const priorityColors = {
-    high: "bg-red-100 text-red-600",
-    medium: "bg-yellow-100 text-yellow-600",
-    low: "bg-green-100 text-green-600",
+    high: "bg-coral/15 text-coral",
+    medium: "bg-ember/15 text-ember",
+    low: "bg-tide/15 text-tide"
   };
 
   const statusLabel = {
     todo: "To do",
     inProgress: "In progress",
     review: "Review",
-    done: "Done",
+    done: "Done"
   };
 
   const editHandler = async () => {
@@ -52,7 +53,7 @@ function DetailsPage({ data }) {
         id,
         priority,
         category,
-        dueDate,
+        dueDate
       });
       const resData = res.data;
       toast.success(resData.message || "Todo updated successfully");
@@ -67,13 +68,12 @@ function DetailsPage({ data }) {
 
   const deleteHandler = async () => {
     if (!id) return;
-
     if (!window.confirm("Are you sure you want to delete this task?")) return;
 
     setLoading(true);
     try {
       const res = await axios.delete("/api/todos", {
-        data: { id },
+        data: { id }
       });
       const resData = res.data;
       toast.success(resData.message || "Todo deleted");
@@ -86,14 +86,23 @@ function DetailsPage({ data }) {
   };
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-        <div className="flex items-start justify-between mb-6">
+    <div className="flex min-h-[70vh] items-center justify-center px-2">
+      <motion.div
+        initial={{ opacity: 0, y: 28, rotateX: 10 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0 }}
+        transition={{ type: "spring", stiffness: 160, damping: 18 }}
+        style={{ transformPerspective: 1000 }}
+        className="glass-panel-strong w-full max-w-2xl rounded-3xl p-8"
+      >
+        <div className="mb-6 flex items-start justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-1">
+            <p className="mb-1 text-xs font-semibold uppercase tracking-[0.18em] text-tide">
+              Task
+            </p>
+            <h2 className="font-display text-2xl font-bold text-ink">
               {isEditing ? "Edit task" : "Task details"}
             </h2>
-            <p className="text-sm text-gray-500">
+            <p className="mt-1 text-sm text-ink-mute">
               {isEditing
                 ? "Update the task information and save your changes."
                 : "Review your task details or switch to edit mode."}
@@ -104,7 +113,7 @@ function DetailsPage({ data }) {
               <button
                 type="button"
                 onClick={() => setIsEditing(true)}
-                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+                className="btn-ghost bg-tide/10 text-tide"
               >
                 <LuPencilLine size={14} /> Edit
               </button>
@@ -113,7 +122,7 @@ function DetailsPage({ data }) {
               type="button"
               onClick={deleteHandler}
               disabled={loading}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium bg-red-50 text-red-600 hover:bg-red-100 transition-colors"
+              className="btn-danger"
             >
               <FiTrash2 size={14} /> Delete
             </button>
@@ -123,35 +132,35 @@ function DetailsPage({ data }) {
         {!isEditing ? (
           <div className="space-y-5">
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-1">
+              <h3 className="mb-1 font-display text-xl font-semibold text-ink">
                 {data.title}
               </h3>
               {data.description && (
-                <p className="text-sm text-gray-600 whitespace-pre-line">
+                <p className="whitespace-pre-line text-sm text-ink-mute">
                   {data.description}
                 </p>
               )}
             </div>
 
-            <div className="flex flex-wrap gap-3 text-xs text-gray-500">
-              <span className="inline-flex items-center px-2 py-1 rounded-full bg-gray-100 text-gray-700">
+            <div className="flex flex-wrap gap-2 text-xs">
+              <span className="inline-flex items-center rounded-lg bg-mist-deep px-2 py-1 font-medium text-ink-soft">
                 {statusLabel[data.status] || data.status}
               </span>
               <span
-                className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs ${
+                className={`priority-chip ${
                   priorityColors[data.priority] || priorityColors.medium
                 }`}
               >
                 <FiFlag /> {data.priority || "medium"}
               </span>
               {data.category && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gray-100 text-gray-700">
+                <span className="inline-flex items-center gap-1 rounded-lg bg-tide/10 px-2 py-1 text-tide">
                   <FiTag />
                   {data.category}
                 </span>
               )}
               {data.dueDate && (
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-50 text-blue-600">
+                <span className="inline-flex items-center gap-1 rounded-lg bg-ember/10 px-2 py-1 text-ember">
                   <FiCalendar />
                   {new Date(data.dueDate).toLocaleDateString()}
                 </span>
@@ -161,45 +170,37 @@ function DetailsPage({ data }) {
         ) : (
           <div className="space-y-5">
             <div>
-              <label
-                htmlFor="title"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="title" className="field-label">
                 Title
               </label>
               <input
                 type="text"
                 id="title"
                 value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                onChange={e => setTitle(e.target.value)}
+                className="field-input"
               />
             </div>
 
             <div>
-              <label
-                htmlFor="description"
-                className="block text-sm font-medium text-gray-700 mb-1"
-              >
+              <label htmlFor="description" className="field-label">
                 Description
               </label>
               <textarea
                 id="description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm min-h-[90px] resize-none"
+                onChange={e => setDescription(e.target.value)}
+                className="field-input min-h-[90px] resize-none"
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Status
-                </label>
+                <label className="field-label">Status</label>
                 <select
                   value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                  onChange={e => setStatus(e.target.value)}
+                  className="field-input"
                 >
                   <option value="todo">To do</option>
                   <option value="inProgress">In progress</option>
@@ -209,13 +210,11 @@ function DetailsPage({ data }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Priority
-                </label>
+                <label className="field-label">Priority</label>
                 <select
                   value={priority}
-                  onChange={(e) => setPriority(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                  onChange={e => setPriority(e.target.value)}
+                  className="field-input"
                 >
                   <option value="low">Low</option>
                   <option value="medium">Medium</option>
@@ -224,26 +223,22 @@ function DetailsPage({ data }) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Category
-                </label>
+                <label className="field-label">Category</label>
                 <input
                   type="text"
                   value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                  onChange={e => setCategory(e.target.value)}
+                  className="field-input"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Due date
-              </label>
+              <label className="field-label">Due date</label>
               <DatePicker
                 selected={dueDate}
-                onChange={(date) => setDueDate(date || new Date())}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none text-sm"
+                onChange={date => setDueDate(date || new Date())}
+                className="field-input"
               />
             </div>
 
@@ -251,7 +246,7 @@ function DetailsPage({ data }) {
               <button
                 type="button"
                 onClick={() => setIsEditing(false)}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition-colors"
+                className="btn-ghost"
               >
                 Cancel
               </button>
@@ -259,14 +254,14 @@ function DetailsPage({ data }) {
                 type="button"
                 onClick={editHandler}
                 disabled={loading}
-                className="px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white hover:bg-blue-700 transition-colors disabled:opacity-80"
+                className="btn-primary"
               >
                 {loading ? "Saving..." : "Save changes"}
               </button>
             </div>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }

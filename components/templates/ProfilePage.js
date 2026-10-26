@@ -1,9 +1,10 @@
-'use client';
+"use client";
 
 import { useEffect, useState } from "react";
 import { CgProfile } from "react-icons/cg";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { motion } from "framer-motion";
 import ProfileForm from "../modules/ProfileForm";
 import ProfileData from "../modules/ProfileData";
 
@@ -39,7 +40,7 @@ function ProfilePage() {
       const res = await axios.post("/api/profile", {
         name,
         lastName,
-        password,
+        password
       });
       if (res.data.status === "Success") {
         toast.success("Profile updated successfully");
@@ -53,22 +54,36 @@ function ProfilePage() {
   };
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center">
-      <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-            <CgProfile size={22} />
+    <div className="flex min-h-[70vh] items-center justify-center">
+      <motion.div
+        initial={{ opacity: 0, y: 28, rotateX: 10 }}
+        animate={{ opacity: 1, y: 0, rotateX: 0 }}
+        transition={{ type: "spring", stiffness: 160, damping: 18 }}
+        style={{ transformPerspective: 1000 }}
+        className="glass-panel-strong w-full max-w-2xl rounded-3xl p-8"
+      >
+        <div className="mb-6 flex items-center gap-3">
+          <div
+            className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-tide to-tide-bright text-white"
+            style={{
+              boxShadow:
+                "inset -3px -5px 10px rgba(0,0,0,0.12), 8px 12px 18px rgba(15,118,110,0.3)"
+            }}
+          >
+            <CgProfile size={24} />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-800">Profile</h2>
-            <p className="text-sm text-gray-500">
+            <h2 className="font-display text-2xl font-bold text-ink">
+              Profile
+            </h2>
+            <p className="text-sm text-ink-mute">
               Manage your personal information and account security.
             </p>
           </div>
         </div>
 
         {loading ? (
-          <div className="text-gray-500 text-sm">Loading profile...</div>
+          <div className="text-sm text-ink-mute">Loading profile...</div>
         ) : data ? (
           <div className="space-y-6">
             <ProfileData data={data} />
@@ -79,7 +94,7 @@ function ProfilePage() {
                 setPassword("");
                 setData(null);
               }}
-              className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+              className="btn-primary"
             >
               Edit Profile
             </button>
@@ -95,7 +110,7 @@ function ProfilePage() {
             submitHandler={submitHandler}
           />
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
