@@ -6,6 +6,13 @@ import TodoCard from "../modules/TodoCard";
 import TodoForm from "../modules/TodoForm";
 import FilterBar from "../modules/FilterBar";
 import { FiPlus } from "react-icons/fi";
+import { useSession } from "next-auth/react";
+import {
+  enableGuestMode,
+  getSortedGuestTodos,
+  isGuestClient,
+  updateGuestTodoStatus
+} from "@/utils/guestStorage";
 
 const columns = [
   {
@@ -40,18 +47,34 @@ const columns = [
   }
 ];
 
-/** Animation #2 — staggered Kanban columns + cards */
+const emptyBoard = {
+  todo: [],
+  inProgress: [],
+  review: [],
+  done: []
+};
+
 function HomePage() {
-  const [todos, setTodos] = useState({
-    todo: [],
-    inProgress: [],
-    review: [],
-    done: []
-  });
+  const { data: session } = useSession();
+  const [isGuest, setIsGuest] = useState(false);
+  const [todos, setTodos] = useState(emptyBoard);
   const [showForm, setShowForm] = useState(false);
   const [filter, setFilter] = useState({ priority: "all", search: "" });
+  const [dropTarget, setDropTarget] = useState(null);
+  const [ready, setReady] = useState(false);
+
+  const detectGuest = () =>
+    isGuestClient() || Boolean(session?.user?.isGuest);
 
   const fetchTodos = async () => {
+    if (detectGuest()) {
+      enableGuestMode();
+      setIsGuest(true);
+      setTodos(getSortedGuestTodos());
+      return;
+    }
+
+    setIsGuest(false);
     const res = await fetch("/api/todos");
     const data = await res.json();
     if (data.status === "Success") {
@@ -60,8 +83,10 @@ function HomePage() {
   };
 
   useEffect(() => {
-    fetchTodos();
-  }, []);
+    if (session?.user?.isGuest) enableGuestMode();
+    fetchTodos().finally(() => setReady(true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [session?.user?.isGuest]);
 
   const filterTodos = list => {
     if (!list) return [];
@@ -79,11 +104,65 @@ function HomePage() {
     });
   };
 
+  const moveTodoOptimistic = (id, from, to) => {
+    if (!from || !to || from === to) return;
+    setTodos(prev => {
+      const source = [...(prev[from] || [])];
+      const idx = source.findIndex(t => t._id === id);
+      if (idx === -1) return prev;
+      const [item] = source.splice(idx, 1);
+      const dest = [...(prev[to] || []), { ...item, status: to }];
+      return { ...prev, [from]: source, [to]: dest };
+    });
+  };
+
+  const persistStatus = async (id, from, toStatus) => {
+    moveTodoOptimistic(id, from, toStatus);
+
+    if (isGuestClient()) {
+      updateGuestTodoStatus(id, toStatus);
+      setTodos(getSortedGuestTodos());
+      return;
+    }
+
+    const res = await fetch("/api/todos", {
+      method: "PATCH",
+      body: JSON.stringify({ id, status: toStatus }),
+      headers: { "Content-Type": "application/json" }
+    });
+    const data = await res.json();
+    if (data.status !== "Success") {
+      fetchTodos();
+    }
+  };
+
+  const handleDrop = async (e, toStatus) => {
+    e.preventDefault();
+    setDropTarget(null);
+    let payload;
+    try {
+      payload = JSON.parse(e.dataTransfer.getData("application/json"));
+    } catch {
+      return;
+    }
+    const { id, from } = payload || {};
+    if (!id || from === toStatus) return;
+    await persistStatus(id, from, toStatus);
+  };
+
   const total =
     (todos.todo?.length || 0) +
     (todos.inProgress?.length || 0) +
     (todos.review?.length || 0) +
     (todos.done?.length || 0);
+
+  if (!ready) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center text-sm text-ink-mute">
+        Loading board...
+      </div>
+    );
+  }
 
   return (
     <div className="relative">
@@ -95,14 +174,14 @@ function HomePage() {
       >
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.2em] text-tide">
-            Your workspace
+            {isGuest ? "Guest workspace · saved on this device" : "Your workspace"}
           </p>
           <h2 className="font-display text-4xl font-bold tracking-tight text-ink md:text-5xl">
             Flowboard
           </h2>
           <p className="mt-2 max-w-md text-ink-mute">
-            {total} tasks in motion — drag momentum across the board and finish
-            strong.
+            {total} tasks in motion — drag cards between columns to update
+            status.
           </p>
         </div>
 
@@ -121,6 +200,7 @@ function HomePage() {
       <div className="scene-3d grid grid-cols-1 gap-5 overflow-x-auto pb-4 md:grid-cols-2 lg:grid-cols-4">
         {columns.map((col, i) => {
           const list = filterTodos(todos[col.key]);
+          const isOver = dropTarget === col.key;
           return (
             <motion.div
               key={col.key}
@@ -132,7 +212,20 @@ function HomePage() {
                 stiffness: 160,
                 damping: 18
               }}
-              className="column-rail min-w-[260px]"
+              onDragOver={e => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "move";
+                setDropTarget(col.key);
+              }}
+              onDragLeave={e => {
+                if (!e.currentTarget.contains(e.relatedTarget)) {
+                  setDropTarget(null);
+                }
+              }}
+              onDrop={e => handleDrop(e, col.key)}
+              className={`column-rail min-w-[260px] transition-all ${
+                isOver ? "border-tide/40 bg-tide/10 ring-2 ring-tide/30" : ""
+              }`}
             >
               <div
                 className={`pointer-events-none absolute inset-x-0 top-0 h-1 rounded-t-2xl bg-gradient-to-r ${col.accent}`}
@@ -156,14 +249,27 @@ function HomePage() {
                       todo={todo}
                       next={col.next}
                       back={col.back}
+                      columnKey={col.key}
+                      isGuest={isGuest}
                       fetchTodos={fetchTodos}
+                      onStatusChange={(id, status) =>
+                        persistStatus(id, col.key, status)
+                      }
                     />
                   ))}
                 </AnimatePresence>
 
                 {list.length === 0 && (
-                  <div className="rounded-xl border border-dashed border-ink/10 px-3 py-8 text-center text-xs text-ink-mute">
-                    Empty lane — add a task to fill the flow.
+                  <div
+                    className={`rounded-xl border border-dashed px-3 py-8 text-center text-xs ${
+                      isOver
+                        ? "border-tide/40 text-tide"
+                        : "border-ink/10 text-ink-mute"
+                    }`}
+                  >
+                    {isOver
+                      ? "Drop task here"
+                      : "Empty lane — drag a task here."}
                   </div>
                 )}
               </div>
@@ -173,7 +279,11 @@ function HomePage() {
       </div>
 
       {showForm && (
-        <TodoForm fetchTodos={fetchTodos} setShowForm={setShowForm} />
+        <TodoForm
+          fetchTodos={fetchTodos}
+          setShowForm={setShowForm}
+          isGuest={isGuest}
+        />
       )}
     </div>
   );

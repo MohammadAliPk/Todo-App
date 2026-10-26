@@ -5,9 +5,10 @@ import { AnimatePresence, motion } from "framer-motion";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FiX } from "react-icons/fi";
+import { addGuestTodo } from "@/utils/guestStorage";
 
 /** Animation #4 — spring modal with 3D flip-in */
-function TodoForm({ fetchTodos, setShowForm }) {
+function TodoForm({ fetchTodos, setShowForm, isGuest = false }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [status, setStatus] = useState("todo");
@@ -16,9 +17,35 @@ function TodoForm({ fetchTodos, setShowForm }) {
   const [dueDate, setDueDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
 
+  const resetAndClose = () => {
+    setTitle("");
+    setDescription("");
+    setStatus("todo");
+    setPriority("medium");
+    setCategory("General");
+    setDueDate(new Date());
+    fetchTodos();
+    setShowForm(false);
+  };
+
   const addHandler = async () => {
     if (!title || !status) return;
     setLoading(true);
+
+    if (isGuest) {
+      addGuestTodo({
+        title,
+        status,
+        description,
+        priority,
+        category,
+        dueDate
+      });
+      setLoading(false);
+      resetAndClose();
+      return;
+    }
+
     const res = await fetch("/api/todos", {
       method: "POST",
       body: JSON.stringify({
@@ -34,14 +61,7 @@ function TodoForm({ fetchTodos, setShowForm }) {
     const data = await res.json();
     setLoading(false);
     if (data.status === "Success") {
-      setTitle("");
-      setDescription("");
-      setStatus("todo");
-      setPriority("medium");
-      setCategory("General");
-      setDueDate(new Date());
-      fetchTodos();
-      setShowForm(false);
+      resetAndClose();
     }
   };
 

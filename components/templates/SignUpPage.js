@@ -143,6 +143,13 @@ function SignUpPage() {
             >
               Login
             </Link>
+            {" · "}
+            <Link
+              href="/login"
+              className="font-semibold text-tide hover:text-tide-bright"
+            >
+              Continue as Guest
+            </Link>
           </p>
         </div>
       </motion.div>

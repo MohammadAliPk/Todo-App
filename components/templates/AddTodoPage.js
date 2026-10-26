@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { GrAddCircle } from "react-icons/gr";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
+import { addGuestTodo, isGuestClient } from "@/utils/guestStorage";
 
 function AddTodoPage() {
   const [title, setTitle] = useState("");
@@ -25,15 +26,27 @@ function AddTodoPage() {
 
     setLoading(true);
     try {
-      const res = await axios.post("/api/todos", {
-        title,
-        status,
-        description,
-        priority,
-        category,
-        dueDate
-      });
-      toast.success(res.data.message || "Todo created successfully");
+      if (isGuestClient()) {
+        addGuestTodo({
+          title,
+          status,
+          description,
+          priority,
+          category,
+          dueDate
+        });
+        toast.success("Todo saved on this device");
+      } else {
+        const res = await axios.post("/api/todos", {
+          title,
+          status,
+          description,
+          priority,
+          category,
+          dueDate
+        });
+        toast.success(res.data.message || "Todo created successfully");
+      }
 
       setTitle("");
       setStatus("todo");

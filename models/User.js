@@ -1,47 +1,50 @@
 import { Schema, model, models } from "mongoose";
 
 const userSchema = new Schema({
-    email: {
+  email: {
+    type: String,
+    required: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  name: {
+    type: String
+  },
+  lastName: {
+    type: String
+  },
+  isGuest: {
+    type: Boolean,
+    default: false
+  },
+  todos: [
+    {
+      title: String,
+      status: String,
+      description: String,
+      priority: {
         type: String,
-        required: true,
-    },
-    password: {
+        enum: ["low", "medium", "high"],
+        default: "medium"
+      },
+      dueDate: Date,
+      category: {
         type: String,
-        required: true,
-    },
-    name: {
-        type: String,
-    },
-    lastName: {
-        type: String,
-    },
-    todos: [
-        {
-            title: String,
-            status: String,
-            description: String,
-            priority: {
-                type: String,
-                enum: ['low', 'medium', 'high'],
-                default: 'medium'
-            },
-            dueDate: Date,
-            category: {
-                type: String,
-                default: 'General'
-            },
-            createdAt: {
-                type: Date,
-                default: () => Date.now(),
-            }
-        }
-    ],
-    createdAt: {
+        default: "General"
+      },
+      createdAt: {
         type: Date,
-        default: () => Date.now(),
-        immutable: true
+        default: () => Date.now()
+      }
     }
-
+  ],
+  createdAt: {
+    type: Date,
+    default: () => Date.now(),
+    immutable: true
+  }
 });
 
 const User = models.User || model("User", userSchema);

@@ -1,9 +1,11 @@
 import DetailsPage from "@/components/templates/DetailsPage";
+import GuestDetailsPage from "@/components/templates/GuestDetailsPage";
 import User from "@/models/User";
 import connectDB from "@/utils/connectDB";
 import { authOptions } from "@/utils/authOptions";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { isGuestRequest } from "@/utils/guestServer";
 
 async function getTodo(id) {
   await connectDB();
@@ -20,6 +22,10 @@ async function getTodo(id) {
 }
 
 export default async function TodoDetails({ params }) {
+  if (isGuestRequest()) {
+    return <GuestDetailsPage id={params.id} />;
+  }
+
   const result = await getTodo(params.id);
   if (result.redirect) redirect(result.redirect);
 

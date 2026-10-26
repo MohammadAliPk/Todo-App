@@ -1,21 +1,32 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { CgProfile } from "react-icons/cg";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import ProfileForm from "../modules/ProfileForm";
 import ProfileData from "../modules/ProfileData";
+import { isGuestClient, loadGuestTodosFlat } from "@/utils/guestStorage";
 
 function ProfilePage() {
+  const [isGuest, setIsGuest] = useState(false);
   const [name, setName] = useState("");
   const [lastName, setLastName] = useState("");
   const [password, setPassword] = useState("");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [guestCount, setGuestCount] = useState(0);
 
   useEffect(() => {
+    const guest = isGuestClient();
+    setIsGuest(guest);
+    if (guest) {
+      setGuestCount(loadGuestTodosFlat().length);
+      setLoading(false);
+      return;
+    }
     fetchProfile();
   }, []);
 
@@ -82,7 +93,24 @@ function ProfilePage() {
           </div>
         </div>
 
-        {loading ? (
+        {isGuest ? (
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-ember/20 bg-ember/10 px-4 py-3 text-sm text-ember">
+              You are in guest mode. Tasks ({guestCount}) are stored in{" "}
+              <strong>localStorage</strong> on this browser only.
+            </div>
+            <ProfileData
+              data={{
+                name: "Guest",
+                lastName: "",
+                email: "local-guest@this-device"
+              }}
+            />
+            <Link href="/signup" className="btn-primary inline-flex">
+              Create an account to sync online
+            </Link>
+          </div>
+        ) : loading ? (
           <div className="text-sm text-ink-mute">Loading profile...</div>
         ) : data ? (
           <div className="space-y-6">

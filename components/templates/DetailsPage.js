@@ -9,8 +9,9 @@ import { LuPencilLine } from "react-icons/lu";
 import { FiCalendar, FiFlag, FiTag, FiTrash2 } from "react-icons/fi";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { deleteGuestTodo, updateGuestTodo } from "@/utils/guestStorage";
 
-function DetailsPage({ data }) {
+function DetailsPage({ data, isGuest = false }) {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(data.title);
   const [description, setDescription] = useState(data.description || "");
@@ -46,6 +47,20 @@ function DetailsPage({ data }) {
 
     setLoading(true);
     try {
+      if (isGuest) {
+        updateGuestTodo(id, {
+          title,
+          description,
+          status,
+          priority,
+          category,
+          dueDate
+        });
+        toast.success("Todo updated (saved locally)");
+        setIsEditing(false);
+        return;
+      }
+
       const res = await axios.post("/api/edit", {
         title,
         description,
@@ -72,6 +87,13 @@ function DetailsPage({ data }) {
 
     setLoading(true);
     try {
+      if (isGuest) {
+        deleteGuestTodo(id);
+        toast.success("Todo deleted");
+        router.replace("/");
+        return;
+      }
+
       const res = await axios.delete("/api/todos", {
         data: { id }
       });

@@ -33,7 +33,12 @@ export async function GET() {
 
   return NextResponse.json({
     status: "Success",
-    data: { name: user.name, lastName: user.lastName, email: user.email }
+    data: {
+      name: user.name,
+      lastName: user.lastName,
+      email: user.email,
+      isGuest: Boolean(user.isGuest)
+    }
   });
 }
 
